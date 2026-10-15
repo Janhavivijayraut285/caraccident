@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ hospital.name }} — Dashboard — ResQCar{% endblock %}
+{% block content %}
+<div class="page-wide">
+
+  <div class="dash-head">
+    <div>
+      <span class="pill-trust" style="box-shadow:none;border:1px solid var(--line)">
+        <span class="live-dot"><span class="pulse"></span> LIVE</span>
+        {{ hospital.name }}
+      </span>
+      <h1>My Dashboard</h1>
+      <p class="sub">{{ hospital.address }} · 📞 {{ hospital.phone or '—' }} · 📍 {{ hospital.lat }}, {{ hospital.lon }} · auto-refreshes every 10s</p>
+    </div>
+    <div class="dash-actions">
+      <a class="btn btn-soft" target="_blank" href="https://maps.google.com/?q={{ hospital.lat }},{{ hospital.lon }}">My location</a>
+      <a class="btn btn-soft" href="{{ url_for('logout') }}">Log Out</a>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card accent">
+      <div class="num">{{ nearby_count }}</div>
+      <div class="lbl">Emergencies near you</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ stats.alerts }}</div>
+      <div class="lbl">Network alerts total</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ stats.today }}</div>
+      <div class="lbl">Alerts today</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ stats.radius }}<span style="font-size:14px"> km</span></div>
+      <div class="lbl">Dispatch radius</div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2>Accident map</h2>
+    <span class="muted">🔴 crash (GPS fix) · 🟩 your hospital — click a pin for details</span>
+  </div>
+  <div class="card" style="margin-top:14px"><div id="dash-map" class="map"></div></div>
+
+  <div class="section-title">
+    <h2>Emergencies within {{ stats.radius }} km</h2>
+    <span class="badge teal" id="alert-count">{{ alerts|length }} shown</span>
+  </div>
+
+  {% if not alerts %}
+  <div class="card" style="margin-top:14px"><div class="empty"><span class="big">✅</span><b>All clear — no nearby emergencies.</b><br><span class="muted">Crashes within {{ RADIUS }} km will appear here instantly.</span></div></div>
+  {% else %}
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Alert</th><th>Vehicle</th><th>Time</th><th>Distance</th><th>Crash location</th><th></th></tr></thead>
+      <tbody>
+      {% for a in alerts %}
+        <tr>
+          <td><span class="badge red">{{ a.reason }}</span><br><span class="muted">Roll {{ a.roll }}° · Pitch {{ a.pitch }}°</span></td>
+          <td><b>{{ a.device_id }}</b></td>
+          <td class="muted">{{ a.time }} IST</td>
+          <td>{% if a.dist is not none %}<b>{{ a.dist }} km</b>{% else %}<b>—</b> <span class="muted">unknown</span>{% endif %}</td>
+          <td>{% if a.lat == 0 and a.lon == 0 %}<b>Location unavailable</b> <span class="muted">(no GPS fix)</span>{% else %}<a target="_blank" href="https://maps.google.com/?q={{ a.lat }},{{ a.lon }}">{{ a.lat }}, {{ a.lon }}</a>{% endif %}</td>
+          <td>{% if a.lat == 0 and a.lon == 0 %}<span class="muted">📞 call driver</span>{% else %}<a class="btn small btn-teal" target="_blank" href="https://maps.google.com/?q={{ a.lat }},{{ a.lon }}">🧭 Navigate</a>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+<script>setTimeout(()=>location.reload(),10000)</script>
+{% endblock %}
+{% block scripts %}
+<script>
+renderCrashMap('dash-map', {
+  hospital: {{ {'lat': hospital.lat, 'lon': hospital.lon, 'name': hospital.name}|tojson }},
+  alerts: {{ alerts|tojson }}
+});
+</script>
+{% endblock %}

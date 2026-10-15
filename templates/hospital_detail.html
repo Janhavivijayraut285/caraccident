@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ hospital.name }} — Dispatch — ResQCar{% endblock %}
+{% block content %}
+<div class="card" style="border-left:5px solid #059669">
+  <span class="badge green">DISPATCH PAGE · BOOKMARK ME</span>
+  <h2 style="margin-top:8px">🏥 {{ hospital.name }}</h2>
+  <p class="muted">{{ hospital.address }}<br>📞 {{ hospital.phone or '—' }} · 📍 {{ hospital.lat }}, {{ hospital.lon }} · auto-refreshes every 10s</p>
+  <div class="btn-row">
+    <a class="btn small btn-soft" target="_blank" href="https://maps.google.com/?q={{ hospital.lat }},{{ hospital.lon }}">My location on map</a>
+    <a class="btn small btn-soft" href="{{ url_for('hospitals') }}">← All hospitals</a>
+  </div>
+</div>
+
+<h3 style="margin:14px 0 10px">Accident map</h3>
+<div class="card"><div id="hosp-map" class="map"></div></div>
+
+<h3 style="margin:14px 0 10px">Emergencies near you ({{ alerts|length }})</h3>
+{% if not alerts %}
+<div class="card"><div class="empty"><span class="big">✅</span><b>All clear — no nearby emergencies.</b><br><span class="muted">Crashes within {{ RADIUS }} km will appear here instantly.</span></div></div>
+{% endif %}
+{% for a in alerts %}
+<div class="card alert-card critical">
+  <span class="badge red">{{ a.reason }}</span>
+  {% if a.dist is not none %}<span class="badge grey">{{ a.dist }} km away</span>{% else %}<span class="badge grey">location unknown</span>{% endif %}
+  <div class="alert-meta">{{ a.device_id }} · {{ a.time }} IST · Roll {{ a.roll }}° Pitch {{ a.pitch }}°</div>
+  <div class="btn-row">
+    {% if a.lat == 0 and a.lon == 0 %}<span class="muted">📍 GPS had no fix — accident confirmed, 📞 call driver for location.</span>{% else %}<a class="btn small btn-teal" target="_blank" href="https://maps.google.com/?q={{ a.lat }},{{ a.lon }}">🧭 Navigate: {{ a.lat }}, {{ a.lon }}</a>{% endif %}
+  </div>
+</div>
+{% endfor %}
+<script>setTimeout(()=>location.reload(),10000)</script>
+{% endblock %}
+{% block scripts %}
+<script>
+renderCrashMap('hosp-map', {
+  hospital: {{ {'lat': hospital.lat, 'lon': hospital.lon, 'name': hospital.name}|tojson }},
+  alerts: {{ alerts|tojson }}
+});
+</script>
+{% endblock %}
