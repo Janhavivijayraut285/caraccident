@@ -23,7 +23,7 @@
     </nav>
     <div class="bar-end">
       {% if current_hospital %}
-      <span class="muted">🏥 {{ current_hospital.name }}</span>
+      <span class="muted h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg> {{ current_hospital.name }}</span>
       <a class="btn btn-soft" href="{{ url_for('logout') }}">Log Out</a>
       {% else %}
       <a class="signin" href="{{ url_for('login') }}">Sign In</a>

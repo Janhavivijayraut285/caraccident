@@ -2,10 +2,10 @@
 {% block title %}Hospitals — ResQCar{% endblock %}
 {% block content %}
 <div class="card">
-  <h2>🏥 Enrolled Hospitals ({{ hospitals|length }})</h2>
+  <h2 class="h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg> Enrolled Hospitals ({{ hospitals|length }})</h2>
   <p class="muted">Each hospital gets a personal dispatch page showing only crashes within {{ stats.radius }} km.</p>
   {% if not hospitals %}
-    <div class="empty"><span class="big">🏥</span><b>No hospitals enrolled yet.</b><br><a class="btn btn-dark" style="margin-top:10px" href="{{ url_for('register') }}">Register the first hospital</a></div>
+    <div class="empty"><span class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span><b>No hospitals enrolled yet.</b><br><a class="btn btn-dark" style="margin-top:10px" href="{{ url_for('register') }}">Register the first hospital</a></div>
   {% else %}
   <table><tr><th>Hospital</th><th>Contact</th><th>Location</th><th>Dispatch page</th></tr>
   {% for h in hospitals %}

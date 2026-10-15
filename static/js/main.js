@@ -59,18 +59,18 @@ window.renderCrashMap = function (elId, opts) {
     var h = opts.hospital;
     pts.push([h.lat, h.lon]);
     L.marker([h.lat, h.lon], { icon: pin('pin-hosp') }).addTo(map)
-      .bindPopup('<b>🏥 ' + esc(h.name) + '</b><br>Your hospital');
+      .bindPopup('<b>' + esc(h.name) + '</b><br>Your hospital');
   }
   (opts.hospitals || []).forEach(function (h) {
     pts.push([h.lat, h.lon]);
     L.marker([h.lat, h.lon], { icon: pin('pin-hosp') }).addTo(map)
-      .bindPopup('<b>🏥 ' + esc(h.name) + '</b>');
+      .bindPopup('<b>' + esc(h.name) + '</b>');
   });
   (opts.alerts || []).forEach(function (a) {
     if (!a || a.lat === 0 && a.lon === 0) return; // no GPS fix: list only
     pts.push([a.lat, a.lon]);
     L.marker([a.lat, a.lon], { icon: pin('pin-crash') }).addTo(map)
-      .bindPopup('<b>🚨 ' + esc(a.reason) + '</b><br>' + esc(a.device_id) +
+      .bindPopup('<b>' + esc(a.reason) + '</b><br>' + esc(a.device_id) +
         ' · ' + esc(a.time) + ' IST<br><a target="_blank" href="https://maps.google.com/?q=' +
         a.lat + ',' + a.lon + '">Navigate →</a>');
   });

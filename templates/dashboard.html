@@ -10,7 +10,7 @@
         {{ hospital.name }}
       </span>
       <h1>My Dashboard</h1>
-      <p class="sub">{{ hospital.address }} · 📞 {{ hospital.phone or '—' }} · 📍 {{ hospital.lat }}, {{ hospital.lon }} · auto-refreshes every 10s</p>
+      <p class="sub">{{ hospital.address }} · <span class="h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg> {{ hospital.phone or '—' }}</span> · <span class="h-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg> {{ hospital.lat }}, {{ hospital.lon }}</span> · auto-refreshes every 10s</p>
     </div>
     <div class="dash-actions">
       <a class="btn btn-soft" target="_blank" href="https://maps.google.com/?q={{ hospital.lat }},{{ hospital.lon }}">My location</a>
@@ -39,7 +39,7 @@
 
   <div class="section-title">
     <h2>Accident map</h2>
-    <span class="muted">🔴 crash (GPS fix) · 🟩 your hospital — click a pin for details</span>
+    <span class="muted"><span class="legend"><span class="dot dot-crash"></span>Crash (GPS fix)</span> · <span class="legend"><span class="dot dot-hosp"></span>Your hospital</span> — click a pin for details</span>
   </div>
   <div class="card" style="margin-top:14px"><div id="dash-map" class="map"></div></div>
 
@@ -49,7 +49,7 @@
   </div>
 
   {% if not alerts %}
-  <div class="card" style="margin-top:14px"><div class="empty"><span class="big">✅</span><b>All clear — no nearby emergencies.</b><br><span class="muted">Crashes within {{ RADIUS }} km will appear here instantly.</span></div></div>
+  <div class="card" style="margin-top:14px"><div class="empty"><span class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5.5"/></svg></span><b>All clear — no nearby emergencies.</b><br><span class="muted">Crashes within {{ RADIUS }} km will appear here instantly.</span></div></div>
   {% else %}
   <div class="tbl">
     <table>
@@ -62,7 +62,7 @@
           <td class="muted">{{ a.time }} IST</td>
           <td>{% if a.dist is not none %}<b>{{ a.dist }} km</b>{% else %}<b>—</b> <span class="muted">unknown</span>{% endif %}</td>
           <td>{% if a.lat == 0 and a.lon == 0 %}<b>Location unavailable</b> <span class="muted">(no GPS fix)</span>{% else %}<a target="_blank" href="https://maps.google.com/?q={{ a.lat }},{{ a.lon }}">{{ a.lat }}, {{ a.lon }}</a>{% endif %}</td>
-          <td>{% if a.lat == 0 and a.lon == 0 %}<span class="muted">📞 call driver</span>{% else %}<a class="btn small btn-teal" target="_blank" href="https://maps.google.com/?q={{ a.lat }},{{ a.lon }}">🧭 Navigate</a>{% endif %}</td>
+          <td>{% if a.lat == 0 and a.lon == 0 %}<span class="muted">Call driver</span>{% else %}<a class="btn small btn-teal" target="_blank" href="https://maps.google.com/?q={{ a.lat }},{{ a.lon }}">Navigate</a>{% endif %}</td>
         </tr>
       {% endfor %}
       </tbody>
